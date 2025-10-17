@@ -1,0 +1,162 @@
+{% extends 'shop/layouts/main.html' %}
+{% load static %}
+
+{% block title %}
+AVK | {{ product.name }}
+{% endblock title %}
+
+{% block content %}
+<section class="bg-light py-4 my-5" style="min-height:600px;">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h4 class="mb-3">{{ product.name }} Details</h4>
+        <hr style="border-color:#b8bfc2;">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Home</a></li>
+            <li class="breadcrumb-item">
+              <a href="{% url 'collections_view' category_slug=product.category.slug %}">
+                {{ product.category.name }}
+              </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+          </ol>
+        </nav>
+        {% include 'shop/inc/message.html' %}
+      </div>
+    </div>
+
+    <!-- ✅ FIXED PRODUCT DISPLAY LAYOUT -->
+    <div class="row align-items-start">
+      <div class="col-md-4 my-3 position-relative">
+        {% if product.trending %}
+          <div class="hot">Hot</div>
+        {% endif %}
+        <div class="product-image-container">
+          <img src="{{ product.product_image.url }}" alt="{{ product.name }}" class="product-image">
+        </div>
+      </div>
+
+      <div class="col-md-8 my-3">
+        <h5 class="text-success">{{ product.name|upper }}</h5>
+        <p>{{ product.vendor }}</p>
+        <p>{{ product.description }}</p>
+        <h6 class="my-2 text-danger">Current Price: Rs. <s>{{ product.original_price }}</s></h6>
+        <h5 class="my-2 text-primary">Offer Price: Rs.{{ product.selling_price }}</h5>
+
+        <div class="my-3">
+          {% if product.quantity > 0 %}
+            <input type="hidden" value="{{ product.id }}" id="pid">
+            <div class="input-group" style="width:150px">
+              <button class="input-group-text bg-success text-light" id="btnMinus"><i class="fa fa-minus"></i></button>
+              <input type="text" name="qty" id="txtQty" value="1" class="form-control text-center">
+              <button class="input-group-text bg-success text-light" id="btnPlus"><i class="fa fa-plus"></i></button>
+            </div>
+            <button class="btn btn-primary mt-3" id="btnCart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+          {% else %}
+            <button class="btn btn-secondary mt-3"><i class="fa fa-minus"></i> Out of Stock</button>
+          {% endif %}
+          <button class="btn btn-danger mt-3" id="btnFav"><i class="fa fa-heart"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ✅ FIXED IMAGE + RESPONSIVE STYLES -->
+<style>
+.product-image-container {
+  width: 100%;
+  max-width: 300px;
+  margin: auto;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+  text-align: center;
+}
+
+.product-image {
+  width: 100%;
+  height: auto;
+  max-height: 300px;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.product-image:hover {
+  transform: scale(1.05);
+}
+
+.hot {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: orange;
+  color: white;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 5px;
+  font-size: 12px;
+}
+
+/* ✅ Responsive fix for mobile */
+@media (max-width: 768px) {
+  .product-image-container {
+    max-width: 100%;
+  }
+  .product-image {
+    max-height: 250px;
+  }
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(event) {
+  const btnPlus = document.getElementById("btnPlus");
+  const btnMinus = document.getElementById("btnMinus");
+  const txtQty = document.getElementById("txtQty");
+  const pid = document.getElementById("pid");
+  const btnCart = document.getElementById("btnCart");
+  const btnFav = document.getElementById("btnFav");
+
+  if(btnPlus) btnPlus.addEventListener("click", function() {
+    let qty = parseInt(txtQty.value, 10);
+    if(qty < 10) txtQty.value = qty + 1;
+  });
+  if(btnMinus) btnMinus.addEventListener("click", function() {
+    let qty = parseInt(txtQty.value, 10);
+    if(qty > 1) txtQty.value = qty - 1;
+  });
+
+  if(btnCart) btnCart.addEventListener("click", function() {
+    let qty = parseInt(txtQty.value, 10);
+    if(qty > 0){
+      fetch("/addtocart", {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Accept': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+        body: JSON.stringify({'product_qty': qty, 'pid': pid.value})
+      }).then(res => res.json()).then(data => alert(data.status));
+    } else alert("Please Enter The Quantity");
+  });
+
+  if(btnFav) btnFav.addEventListener("click", function() {
+    fetch("/fav", {
+      method: 'POST',
+      credentials: 'same-origin',
+      headers: {
+        'Accept': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest',
+        'X-CSRFToken': '{{ csrf_token }}',
+      },
+      body: JSON.stringify({'pid': pid.value})
+    }).then(res => res.json()).then(data => alert(data.status));
+  });
+});
+</script>
+{% endblock content %}

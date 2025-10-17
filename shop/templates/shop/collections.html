@@ -1,0 +1,56 @@
+{% extends 'shop/layouts/main.html' %}
+{% load static %}
+
+{% block title %}
+  Collections | AVK
+{% endblock title %}
+
+{% block content %}
+{% include 'shop/inc/slider.html' %} 
+
+<section class="py-5 text-center container" style="margin-top:40px;">
+  <div class="row py-lg-1">
+    <div class="col-lg-6 col-md-8 mx-auto">
+      <h1 class="fw-light">Bestsellers</h1>
+      <p class="lead text-muted">Our most popular products based on sales. Updated hourly.</p>
+      <p>
+        <a href="{% url 'login' %}" class="btn btn-primary my-2">Already User</a>
+        <a href="{% url 'register' %}" class="btn btn-secondary my-2">Register</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<section class="bg-light py-4 my-5" style="min-height:600px;">
+  <div class="container">
+    <div class="row g-4"> <!-- g-4 adds consistent gap between cards -->
+      <div class="col-12">
+        <h4 class="mb-3">Categories</h4>
+        <hr style="border-color:#b8bfc2;">
+        {% include 'shop/inc/message.html' %}
+      </div>
+
+      {% for item in catagory %}
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm border-0">
+          <a href="{% url 'collections_view' category_slug=item.slug %}" class="text-decoration-none text-dark">
+            <img 
+              src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'uploads/default.png' %}{% endif %}" 
+              class="card-img-top rounded-top" 
+              alt="{{ item.name }}" 
+              style="height: 260px; object-fit: cover;"
+            >
+            <div class="card-body">
+              <h5 class="card-title text-primary">{{ item.name }}</h5>
+              <p class="card-text text-muted small">{{ item.description|truncatechars:80 }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+{% endblock content %}
