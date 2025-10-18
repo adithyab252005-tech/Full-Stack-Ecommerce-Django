@@ -1,7 +1,7 @@
 {% extends 'shop/layouts/main.html' %}
 {% load static %}
 {% block title %}
-AVK | Online Shopping
+DummyMart | Online Shopping
 {% endblock title %}
 {% block content %}
 
@@ -80,12 +80,12 @@ AVK | Online Shopping
   </div>
  
   <div id="dynamic-text-container">
-    <h5 id="dynamic-text">AVK Shopping</h5>
+    <h5 id="dynamic-text">DummyMart</h5>
   </div>
   <script> 
      document.addEventListener('DOMContentLoaded', function() { 
             const textElement = document.getElementById("dynamic-text"); 
-            const text = "AVK Shopping🛒 Always❤️ in Style!🕺💃 Here we have more new collections for you!😍 keep shopping! 🛍️";
+            const text = "DummyMartShopping🛒 Always❤️ in Style!🕺💃 Here we have more new collections for you!😍 keep shopping! 🛍️";
             const space = "\u00A0\u00A0\u00A0\u00A0\u00A0"; // Adjust the number of non-breaking spaces as needed
             const continuousText = text + space + text + space + text; // Create a longer string for continuous scrolling
             textElement.textContent = continuousText; // Set the text content to the duplicated text
