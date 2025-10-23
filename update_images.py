@@ -2,7 +2,7 @@ import os
 import django
 
 # Setup Django environment
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "avk_project.settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "our_project.settings")
 django.setup()
 
 from shop.models import Product  # adjust import if your model name is different

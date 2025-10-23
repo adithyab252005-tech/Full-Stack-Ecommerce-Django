@@ -5,7 +5,7 @@ import django
 from django.utils.text import slugify
 
 # Tell Django where your settings are
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'avk_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'our_project.settings')
 django.setup()
 
 # Now import your models safely
