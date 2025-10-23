@@ -1,6 +1,6 @@
 from django.http import  JsonResponse
 from django.shortcuts import redirect, render,get_object_or_404
-from shop.form import CustomUserForm
+from shop.form import CustomUserForm,ProfileForm
 from . models import *
 from django.contrib import messages
 from django.contrib.auth import authenticate,login,logout
@@ -8,7 +8,7 @@ import json
 from django.templatetags.static import static
 from django.template.loader import select_template
 from .models import Catagory, Product
-
+from django.contrib.auth.decorators import login_required
 def home(request):
   products = Product.objects.filter(trending=1)
     
@@ -136,3 +136,16 @@ def product_details(request, category_slug, product_slug):
     product = get_object_or_404(Product, category=category, slug=product_slug, status=True)
     return render(request, "shop/products/product_details.html", {"product": product})
 
+@login_required(login_url='login')
+def edit_profile(request):
+    profile = request.user.profile
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, instance=profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Address updated successfully.")
+            return redirect('edit_profile')
+    else:
+        form = ProfileForm(instance=profile)
+
+    return render(request, 'shop/profile_edit.html', {'form': form})

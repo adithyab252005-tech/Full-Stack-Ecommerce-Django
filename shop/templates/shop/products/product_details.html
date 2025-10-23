@@ -54,6 +54,9 @@ DummyMart | {{ product.name }}
               <button class="input-group-text bg-success text-light" id="btnPlus"><i class="fa fa-plus"></i></button>
             </div>
             <button class="btn btn-primary mt-3" id="btnCart"><i class="fa fa-shopping-cart"></i> Add to Cart</button>
+            <!-- Buy Now via WhatsApp -->
+            <button class="btn btn-success mt-3" id="btnBuyNow"><i class="fab fa-whatsapp"></i> Buy Now</button>
+
           {% else %}
             <button class="btn btn-secondary mt-3"><i class="fa fa-minus"></i> Out of Stock</button>
           {% endif %}
@@ -158,5 +161,36 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }).then(res => res.json()).then(data => alert(data.status));
   });
 });
+
+const btnBuyNow = document.getElementById("btnBuyNow");
+
+if (btnBuyNow) {
+  btnBuyNow.addEventListener("click", function () {
+    let qty = parseInt(txtQty.value, 10);
+    if (qty > 0) {
+      const productName = "{{ product.name|escapejs }}";
+      const categoryName = "{{ product.category.name|escapejs }}";
+      const address = "{{ user.profile.address|default:''|escapejs }}";
+      const username = "{{ user.get_full_name|default:user.username|escapejs }}";
+      const sellingPrice = parseFloat("{{ product.selling_price }}"); // Selling price
+
+      if (!address || address.trim() === "") {
+        alert("⚠️ Please update your address in your profile before placing an order.");
+        return;
+      }
+
+      const total = sellingPrice * qty; // ✅ Total amount
+      const message = `Hello I am ${username}. I would like to buy ${productName} from category ${categoryName}, quantity ${qty}, total Rs ${total}. My address is ${address}.`;
+
+      const whatsappNumber = "918122787023"; // Your number
+      const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
+
+      window.open(whatsappUrl, "_blank");
+    } else {
+      alert("Please enter a valid quantity before buying.");
+    }
+  });
+}
+
 </script>
 {% endblock content %}

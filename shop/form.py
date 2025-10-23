@@ -1,6 +1,6 @@
 from pyexpat import model
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
+from .models import User,Profile
 from django import forms
  
 class CustomUserForm(UserCreationForm):
@@ -11,3 +11,15 @@ class CustomUserForm(UserCreationForm):
   class Meta:
     model=User
     fields=['username','email','password1','password2']
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = Profile
+        fields = ['address']
+        widgets = {
+            'address': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Enter your delivery address',
+                'rows': 3,
+            }),
+        }

@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 import datetime
 import os
 from django.utils.text import slugify
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+
+
 def getFileName(requset,filename):
   now_time=datetime.datetime.now().strftime("%Y%m%d%H:%M:%S")
   new_filename="%s%s"%(now_time,filename)
@@ -57,3 +61,18 @@ class Favourite(models.Model):
 	user=models.ForeignKey(User,on_delete=models.CASCADE)
 	product=models.ForeignKey(Product,on_delete=models.CASCADE)
 	created_at=models.DateTimeField(auto_now_add=True)
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    address = models.TextField(max_length=500, blank=True, null=True)
+
+    def __str__(self):
+        return self.user.username
+
+
+@receiver(post_save, sender=User)
+def create_or_update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
