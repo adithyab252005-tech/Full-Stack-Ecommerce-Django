@@ -36,7 +36,10 @@ class Product(models.Model):
   status=models.BooleanField(default=False,help_text="0-show,1-Hidden")
   trending=models.BooleanField(default=False,help_text="0-default,1-Trending")
   created_at=models.DateTimeField(auto_now_add=True)
- 
+  def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.name)  # Automatically create slug
+        super().save(*args, **kwargs)
   def __str__(self) :
     return self.name
  
